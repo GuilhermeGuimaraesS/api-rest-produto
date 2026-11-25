@@ -1,11 +1,13 @@
 package com.guimaraes.produto.service;
 
 import com.guimaraes.produto.dto.*;
+import com.guimaraes.produto.enums.CategoriaProduto;
+import com.guimaraes.produto.infra.EntityRegisteredException;
 import com.guimaraes.produto.model.entities.Produto;
 import com.guimaraes.produto.model.repositories.ProdutoRepository;
 
 import jakarta.persistence.EntityNotFoundException;
-
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -37,6 +39,31 @@ public class ProdutoService {
         }
 
         return toResponseDTO(produtoOptional.get());
+    }
+
+    @Transactional
+    public ProdutoResponseDTO create(@Valid ProdutoRequestDTO produtoRequestDTO){
+
+        if (produtoRepository.existsByNome(produtoRequestDTO.nome())){
+            throw new EntityRegisteredException("Produto já está cadastrado: " + produtoRequestDTO.nome());
+        }
+
+        Produto produto = toEntity(produtoRequestDTO);
+        produto.setCodigo(gerarCodigoUnico(produtoRequestDTO.categoriaProduto()));
+        Produto produtoSalvo = produtoRepository.save(produto);
+        return toResponseDTO(produtoRepository.save(produtoSalvo));
+    }
+
+    private String gerarCodigoUnico(CategoriaProduto categoria) {
+        String prefixo = categoria.name().substring(0, 3);
+        String codigo;
+
+        do {
+            int numero = RANDOM.nextInt(10000);
+            codigo = String.format("%s-%04d", prefixo, numero);
+        } while (produtoRepository.existsByCodigo(codigo));
+
+        return codigo;
     }
 
     public Produto toEntity(ProdutoRequestDTO produtoRequestDTO) {

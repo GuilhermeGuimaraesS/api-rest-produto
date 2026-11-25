@@ -21,6 +21,17 @@ public class GlobalExceptionHandler {
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body(erro);
     }
 
+    @ExceptionHandler(EntityRegisteredException.class)
+    public ResponseEntity<ErroResponse> handleEntityRegistered(EntityRegisteredException exception){
+        ErroResponse erro = new ErroResponse(
+                HttpStatus.CONFLICT.value(),
+                exception.getMessage(),
+                LocalDateTime.now()
+        );
+
+        return ResponseEntity.status(HttpStatus.CONFLICT).body(erro);
+    }
+
     public record ErroResponse(
             int status,
             String mensagem,

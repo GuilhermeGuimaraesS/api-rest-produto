@@ -1,5 +1,6 @@
 package com.guimaraes.produto.controller;
 
+import com.guimaraes.produto.dto.ProdutoRequestDTO;
 import com.guimaraes.produto.dto.ProdutoResponseDTO;
 import com.guimaraes.produto.service.ProdutoService;
 
@@ -27,4 +28,8 @@ public class ProdutoController {
         return ResponseEntity.ok().body(produtoService.findByCodigo(codigo));
     }
 
+    @PostMapping
+    public ProdutoResponseDTO create(@RequestBody ProdutoRequestDTO produtoRequestDTO){
+        return produtoService.create(produtoRequestDTO);
+    }
 }
