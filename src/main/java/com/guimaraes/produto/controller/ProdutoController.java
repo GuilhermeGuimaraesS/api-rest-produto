@@ -41,4 +41,9 @@ public class ProdutoController {
         return ResponseEntity.ok().body(produtoService.update(codigo, produtoRequestDTO));
     }
 
+    @DeleteMapping("/{codigo}")
+    public ResponseEntity<ProdutoResponseDTO> delete(@PathVariable String codigo){
+        return produtoService.delete(codigo);
+    }
+
 }

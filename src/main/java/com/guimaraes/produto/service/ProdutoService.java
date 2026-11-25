@@ -9,6 +9,8 @@ import com.guimaraes.produto.model.repositories.ProdutoRepository;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -68,6 +70,18 @@ public class ProdutoService {
         produtoRepository.save(produtoAuxiliar);
 
         return toResponseDTO(produtoAuxiliar);
+    }
+
+    @Transactional
+    public ResponseEntity<ProdutoResponseDTO> delete(String codigo){
+        Optional<Produto> optionalProduto = produtoRepository.findByCodigo(codigo);
+
+        if(optionalProduto.isEmpty()){
+            throw new EntityNotFoundException("Produto não encontrado: " + codigo);
+        }
+
+        produtoRepository.delete(optionalProduto.get());
+        return new ResponseEntity<ProdutoResponseDTO>(HttpStatus.NO_CONTENT);
     }
 
     private String gerarCodigoUnico(CategoriaProduto categoria) {
