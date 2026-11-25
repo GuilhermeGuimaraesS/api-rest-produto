@@ -54,6 +54,22 @@ public class ProdutoService {
         return toResponseDTO(produtoRepository.save(produtoSalvo));
     }
 
+    @Transactional
+    public ProdutoResponseDTO update(String codigo, ProdutoRequestDTO produtoRequestDTO){
+        Optional<Produto> optionalProduto = produtoRepository.findByCodigo(codigo);
+
+        if (optionalProduto.isEmpty()){
+            throw new EntityNotFoundException("Produto não encontrado: " + codigo);
+        }
+
+        Produto produtoAuxiliar = optionalProduto.get();
+        produtoAuxiliar.setPreco(produtoRequestDTO.preco());
+        produtoAuxiliar.setQuantidadeEstoque(produtoRequestDTO.quantidadeEstoque());
+        produtoRepository.save(produtoAuxiliar);
+
+        return toResponseDTO(produtoAuxiliar);
+    }
+
     private String gerarCodigoUnico(CategoriaProduto categoria) {
         String prefixo = categoria.name().substring(0, 3);
         String codigo;

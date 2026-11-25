@@ -32,4 +32,13 @@ public class ProdutoController {
     public ProdutoResponseDTO create(@RequestBody ProdutoRequestDTO produtoRequestDTO){
         return produtoService.create(produtoRequestDTO);
     }
+
+    @PutMapping("/{codigo}")
+    public ResponseEntity<ProdutoResponseDTO> update(
+            @PathVariable String codigo,
+            @RequestBody ProdutoRequestDTO produtoRequestDTO
+    ){
+        return ResponseEntity.ok().body(produtoService.update(codigo, produtoRequestDTO));
+    }
+
 }
